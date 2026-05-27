@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fontRandomiser — demo</title>
+
+  <!--
+    Point these URLs at your actual font files.
+    The demo assumes a fonts/ folder at the same level as this file.
+  -->
+  <style>
+    @font-face { font-family: 'East Sea Dokdo';       src: url('../fonts/EastSeaDokdo-Regular.ttf');      font-display: swap; }
+    @font-face { font-family: 'Finger Paint';         src: url('../fonts/FingerPaint-Regular.ttf');       font-display: swap; }
+    @font-face { font-family: 'Jacquard 12';          src: url('../fonts/Jacquard12-Regular.ttf');        font-display: swap; }
+    @font-face { font-family: 'Jersey 10';            src: url('../fonts/Jersey10-Regular.ttf');          font-display: swap; }
+    @font-face { font-family: 'Jersey 25';            src: url('../fonts/Jersey25-Regular.ttf');          font-display: swap; }
+    @font-face { font-family: 'Knewave';              src: url('../fonts/Knewave-Regular.ttf');           font-display: swap; }
+    @font-face { font-family: 'Mansalva';             src: url('../fonts/Mansalva-Regular.ttf');          font-display: swap; }
+    @font-face { font-family: 'Permanent Marker';     src: url('../fonts/PermanentMarker-Regular.ttf');   font-display: swap; }
+    @font-face { font-family: 'Sue Ellen Francisco';  src: url('../fonts/SueEllenFrancisco-Regular.ttf'); font-display: swap; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: sans-serif;
+      background: #fff;
+      color: #111;
+      padding: 4rem 2rem;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: #999; margin-bottom: 3rem; }
+
+    nav { display: flex; gap: 2rem; margin-bottom: 3rem; }
+
+    nav a {
+      font-size: 2rem;
+      text-decoration: none;
+      color: #111;
+      cursor: default;
+    }
+
+    .solo { font-size: 3rem; margin-bottom: 3rem; display: inline-block; }
+
+    button {
+      font-family: sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.5rem 1rem;
+      border: 1px solid #111;
+      background: #fff;
+      cursor: pointer;
+    }
+    button:hover { background: #111; color: #fff; }
+  </style>
+</head>
+<body>
+
+  <h1>fontRandomiser — demo</h1>
+
+  <!-- data-rf marks elements for randomisation -->
+  <nav>
+    <a data-rf>Blog</a>
+    <a data-rf>Events</a>
+    <a data-rf>Contact</a>
+  </nav>
+
+  <div>
+    <span class="solo" data-rf>Cool Bike Club</span>
+  </div>
+
+  <button onclick="fontRandomiser.randomise()">Re-randomise</button>
+
+  <script src="../fontRandomiser.js"></script>
+  <script>
+    // Default: uses [data-rf] selector and full font list.
+    // Customise here — or just call fontRandomiser.init() with no args.
+    fontRandomiser.init();
+
+    // Examples of what else you can do:
+    //
+    // Use a subset of fonts:
+    //   fontRandomiser.init({ fonts: ['Knewave', 'Jersey 10', 'Finger Paint'] });
+    //
+    // Target different elements:
+    //   fontRandomiser.init({ selectors: ['.nav-item', 'h2'] });
+    //
+    // Re-randomise on a keypress:
+    //   document.addEventListener('keydown', () => fontRandomiser.randomise());
+  </script>
+
+</body>
+</html>
