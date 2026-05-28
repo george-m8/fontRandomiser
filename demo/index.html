@@ -76,17 +76,28 @@
 
   <script src="../fontRandomiser.js"></script>
   <script>
-    // Default: uses [data-rf] selector and full font list.
-    // Customise here — or just call fontRandomiser.init() with no args.
-    fontRandomiser.init();
+    fontRandomiser.init({
+      fonts: [
+        'East Sea Dokdo',
+        'Finger Paint',
+        'Jacquard 12',
+        'Jersey 10',
+        'Jersey 25',
+        'Knewave',
+        'Mansalva',
+        'Permanent Marker',
+        'Sue Ellen Francisco',
+      ],
+      fallback: 'cursive',
+    });
 
     // Examples of what else you can do:
     //
     // Use a subset of fonts:
-    //   fontRandomiser.init({ fonts: ['Knewave', 'Jersey 10', 'Finger Paint'] });
+    //   fontRandomiser.init({ fonts: ['Knewave', 'Jersey 10'], fallback: 'cursive' });
     //
     // Target different elements:
-    //   fontRandomiser.init({ selectors: ['.nav-item', 'h2'] });
+    //   fontRandomiser.init({ ..., selectors: ['.nav-item', 'h2'] });
     //
     // Re-randomise on a keypress:
     //   document.addEventListener('keydown', () => fontRandomiser.randomise());

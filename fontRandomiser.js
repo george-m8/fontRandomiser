@@ -1,35 +1,35 @@
-(function (global) {
+(function (root, factory) {
+  if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+    module.exports = factory();
+  } else {
+    root.fontRandomiser = factory();
+  }
+}(typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : this, function () {
 
-  // ─── Font pool ─────────────────────────────────────────────────────────────
-  // Add or remove font-family names here. Each name must match an @font-face
-  // declaration in your stylesheet. Each targeted element receives a different
-  // font drawn from a freshly-shuffled copy of this list on every call.
+  // W3C generic font families. Used as the default font pool so the library
+  // works out of the box without any configuration or external font files.
+  var GENERIC_FAMILIES = ['cursive', 'fantasy', 'serif', 'sans-serif', 'monospace'];
 
-  var DEFAULT_FONTS = [
-    'East Sea Dokdo',
-    'Finger Paint',
-    'Jacquard 12',
-    'Jersey 10',
-    'Jersey 25',
-    'Knewave',
-    'Mansalva',
-    'Permanent Marker',
-    'Sue Ellen Francisco',
-  ];
+  // ─── Defaults ──────────────────────────────────────────────────────────────
+  // Override any of these via init(options) — see API below.
 
-  // ─── Targets ───────────────────────────────────────────────────────────────
-  // CSS selectors for the elements that should receive randomised fonts.
-  // Any valid querySelectorAll string works — class, data attribute, tag, etc.
+  var DEFAULT_FONTS = GENERIC_FAMILIES.slice();
 
   var DEFAULT_SELECTORS = [
     '[data-rf]',
   ];
+
+  // Appended to each custom font name as a CSS cascade fallback, e.g.
+  // "'East Sea Dokdo', cursive". Has no effect when the pool contains only
+  // generic families (they don't need a fallback). Override per-project.
+  var DEFAULT_FALLBACK = 'sans-serif';
 
   // ─── Internals ─────────────────────────────────────────────────────────────
 
   var state = {
     fonts:     DEFAULT_FONTS.slice(),
     selectors: DEFAULT_SELECTORS.slice(),
+    fallback:  DEFAULT_FALLBACK,
   };
 
   function shuffle(arr) {
@@ -41,6 +41,12 @@
     return a;
   }
 
+  // Generics are used bare; custom names get quoted + fallback appended.
+  function fontValue(name) {
+    if (GENERIC_FAMILIES.indexOf(name) !== -1) return name;
+    return "'" + name + "', " + state.fallback;
+  }
+
   function run() {
     var elements = [];
     state.selectors.forEach(function (sel) {
@@ -50,7 +56,7 @@
 
     var pool = shuffle(state.fonts);
     elements.forEach(function (el, i) {
-      el.style.fontFamily = "'" + pool[i % pool.length] + "', cursive";
+      el.style.fontFamily = fontValue(pool[i % pool.length]);
     });
   }
 
@@ -62,19 +68,16 @@
    * Configure the library and run immediately (or on DOMContentLoaded if the
    * document is still loading). Call once at page load.
    *
-   * options.fonts     {string[]}  — replace the default font pool
-   * options.selectors {string[]}  — replace the default selectors
-   *
-   * Example:
-   *   fontRandomiser.init({
-   *     fonts: ['Knewave', 'Jersey 10'],
-   *     selectors: ['.nav-item', '[data-rf]'],
-   *   });
+   * options.fonts     {string[]}  — custom font pool (default: W3C generics)
+   * options.selectors {string[]}  — CSS selectors to target (default: [data-rf])
+   * options.fallback  {string}    — generic family appended to each custom font
+   *                                 name as a CSS cascade fallback (default: 'sans-serif')
    */
   function init(options) {
     if (options) {
-      if (Array.isArray(options.fonts))     state.fonts     = options.fonts;
-      if (Array.isArray(options.selectors)) state.selectors = options.selectors;
+      if (Array.isArray(options.fonts))         state.fonts     = options.fonts;
+      if (Array.isArray(options.selectors))     state.selectors = options.selectors;
+      if (typeof options.fallback === 'string') state.fallback  = options.fallback;
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', run);
@@ -87,12 +90,8 @@
    * fontRandomiser.randomise(options?)
    *
    * Re-run the randomisation at any time — on interaction, route change, etc.
-   * Accepts the same options as init() to do a one-off override without
-   * changing the stored state.
-   *
-   * Example:
-   *   fontRandomiser.randomise();
-   *   fontRandomiser.randomise({ selectors: ['.hero-title'] });
+   * Accepts the same options as init() for a one-off override without changing
+   * stored state.
    */
   function randomise(options) {
     if (!options) {
@@ -101,20 +100,25 @@
     }
     var savedFonts     = state.fonts;
     var savedSelectors = state.selectors;
-    if (Array.isArray(options.fonts))     state.fonts     = options.fonts;
-    if (Array.isArray(options.selectors)) state.selectors = options.selectors;
+    var savedFallback  = state.fallback;
+    if (Array.isArray(options.fonts))         state.fonts     = options.fonts;
+    if (Array.isArray(options.selectors))     state.selectors = options.selectors;
+    if (typeof options.fallback === 'string') state.fallback  = options.fallback;
     run();
     state.fonts     = savedFonts;
     state.selectors = savedSelectors;
+    state.fallback  = savedFallback;
   }
 
-  global.fontRandomiser = {
+  return {
     init:      init,
     randomise: randomise,
     get fonts()          { return state.fonts; },
     set fonts(v)         { state.fonts = v; },
     get selectors()      { return state.selectors; },
     set selectors(v)     { state.selectors = v; },
+    get fallback()       { return state.fallback; },
+    set fallback(v)      { state.fallback = v; },
   };
 
-})(typeof window !== 'undefined' ? window : this);
+}));
