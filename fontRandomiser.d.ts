@@ -1,7 +1,7 @@
 interface FontRandomiserOptions {
   fonts?: string[]
   selectors?: string[]
-  fallback?: string
+  fallback?: string | string[]
 }
 
 interface FontRandomiser {
@@ -9,7 +9,7 @@ interface FontRandomiser {
   randomise(options?: FontRandomiserOptions): void
   fonts: string[]
   selectors: string[]
-  fallback: string
+  fallback: string | string[]
 }
 
 declare const fontRandomiser: FontRandomiser

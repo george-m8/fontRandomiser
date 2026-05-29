@@ -20,9 +20,10 @@
   ];
 
   // Appended to each custom font name as a CSS cascade fallback, e.g.
-  // "'East Sea Dokdo', cursive". Has no effect when the pool contains only
-  // generic families (they don't need a fallback). Override per-project.
-  var DEFAULT_FALLBACK = 'sans-serif';
+  // "'East Sea Dokdo', cursive". Accepts a string or an array — when an array
+  // is given a different generic is picked for each element. Has no effect when
+  // the pool contains only generic families. Override per-project.
+  var DEFAULT_FALLBACK = GENERIC_FAMILIES.slice();
 
   // ─── Internals ─────────────────────────────────────────────────────────────
 
@@ -42,9 +43,13 @@
   }
 
   // Generics are used bare; custom names get quoted + fallback appended.
+  // When fallback is an array a random entry is picked per call.
   function fontValue(name) {
     if (GENERIC_FAMILIES.indexOf(name) !== -1) return name;
-    return "'" + name + "', " + state.fallback;
+    var fb = Array.isArray(state.fallback)
+      ? state.fallback[Math.floor(Math.random() * state.fallback.length)]
+      : state.fallback;
+    return "'" + name + "', " + fb;
   }
 
   function run() {
@@ -77,7 +82,7 @@
     if (options) {
       if (Array.isArray(options.fonts))         state.fonts     = options.fonts;
       if (Array.isArray(options.selectors))     state.selectors = options.selectors;
-      if (typeof options.fallback === 'string') state.fallback  = options.fallback;
+      if (typeof options.fallback === 'string' || Array.isArray(options.fallback)) state.fallback = options.fallback;
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', run);
@@ -103,7 +108,7 @@
     var savedFallback  = state.fallback;
     if (Array.isArray(options.fonts))         state.fonts     = options.fonts;
     if (Array.isArray(options.selectors))     state.selectors = options.selectors;
-    if (typeof options.fallback === 'string') state.fallback  = options.fallback;
+    if (typeof options.fallback === 'string' || Array.isArray(options.fallback)) state.fallback = options.fallback;
     run();
     state.fonts     = savedFonts;
     state.selectors = savedSelectors;
