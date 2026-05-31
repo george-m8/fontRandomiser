@@ -62,7 +62,7 @@ fontRandomiser.init({
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `fonts` | `string[]` | W3C generics | Font pool. Each name must match a `font-family` in your CSS. |
-| `fallback` | `string` | `'sans-serif'` | W3C generic appended as a CSS cascade fallback for browsers that don't load the external font. |
+| `fallback` | `string \| string[]` | W3C generics | Generic family (or array of families) appended as a CSS cascade fallback. When an array is given, a different entry is picked randomly for each element. Has no effect when the pool contains only generic families. |
 | `selectors` | `string[]` | `['[data-rf]']` | CSS selectors for elements to target. |
 
 ### `fontRandomiser.randomise(options?)`
